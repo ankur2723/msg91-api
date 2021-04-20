@@ -164,7 +164,7 @@ function modifyCallbackIfNull(callback){
 }
 
 function isData(payload) {
-    if (payload) return payload;
+    if (payload) return (typeof payload === 'object' ? JSON.stringify(payload) : payload);
     return null;
 }
 
@@ -177,6 +177,7 @@ function makeHttpRequest(options, postData, callback) {
             data += chunk;
         });
         res.on('end', function () {
+            data = JSON.parse(data);         
             callback(null, data);
         });
     });
