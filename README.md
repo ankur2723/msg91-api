@@ -2,9 +2,6 @@
 Msg91 API V5 for node.js
 
 
-[![NPM](https://nodei.co/npm/msg91.png?downloads=true)](https://npmjs.org/package/msg91)
-
-
 # Msg91 Installation
 
 ```javascript 
@@ -69,7 +66,7 @@ msg91.sendOTP(mobileNo, templateId, postData, function(err, response){
 
 var mobileNo = "XXXXXXXXXX";
 
-msg91.verifyOtp(mobileNo, function(err, response){
+msg91.verifyOTP(mobileNo, function(err, response){
     console.log(err);
     console.log(response);
 });
@@ -81,13 +78,13 @@ msg91.verifyOtp(mobileNo, function(err, response){
 
 var mobileNo = "XXXXXXXXXX";
 
-msg91.resendOtp(mobileNo, function(err, response){
+msg91.resendOTP(mobileNo, function(err, response){
     console.log(err);
     console.log(response);
 });
 
 // Resend specific type of OTP.
-msg91.resendOtp(mobileNo, "OTP_TYPE", function(err, response){
+msg91.resendOTP(mobileNo, "OTP_TYPE", function(err, response){
     console.log(err);
     console.log(response);
 });

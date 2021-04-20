@@ -1,6 +1,6 @@
 Version         Changes
 ==============================================================
-1.0.0           Support for Simple Message Send API, 
+1.0.3           Support for Simple Message Send API, 
                 Support for Single No, Array List, CSV, 
                 Get Balance / Get Balance by Route,
                 Support of Flow Id and Template Id

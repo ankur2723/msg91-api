@@ -33,7 +33,7 @@ module.exports = function (authKey) {
         });
     };    
 
-    this.sendOtp = function (mobileNos, templateId, postData, callback) {
+    this.sendOTP = function (mobileNos, templateId, postData, callback) {
 
         callback = modifyCallbackIfNull(callback);
 
@@ -60,7 +60,7 @@ module.exports = function (authKey) {
         });
     };   
 
-    this.verifyOtp = function (mobileNos, callback) {
+    this.verifyOTP = function (mobileNos, callback) {
 
         callback = modifyCallbackIfNull(callback);
 
@@ -81,7 +81,7 @@ module.exports = function (authKey) {
         });
     };
 
-    this.resendOtp = function (mobileNos, type, callback) {
+    this.resendOTP = function (mobileNos, type, callback) {
 
         if(arguments.length == 2) {
             callback = type;
