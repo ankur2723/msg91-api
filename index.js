@@ -9,6 +9,10 @@ module.exports = function (authKey) {
         throw new Error("MSG91 Authorization Key not provided.");
     }
 
+    this.otp_length = 4; // default: 4, min: 4, max: 9
+    this.otp_expiry = 1440; // default 1 Day = 1440 minutes
+    this.retry_type = 'voice';
+
     this.sendSMS = function (postData, callback) {
 
         callback = modifyCallbackIfNull(callback);
@@ -31,17 +35,52 @@ module.exports = function (authKey) {
         });
     };    
 
-    this.sendOTP = function (mobileNos, templateId, postData, callback) {
+    /**
+     * Set the OTP expiry minutes for MSG91 api call
+     */
+    this.setOtpExpiry = function (otp_expiry) {
+        this.otp_expiry = otp_expiry;
+        return;
+    };
+
+    /**
+     * Set the OTP length for MSG91 api call
+     */
+    this.setOtpLength = function (otp_length) {
+        this.otp_length = otp_length;
+        return;
+    };
+
+    /**
+     * Send Otp to given mobile number
+     * @param {string} contactNumber receiver's mobile number along with country code
+     * @param {string} templateId
+     * @param {string, optional} params // otp, otp_expiry, etc
+     * Return promise if no callback is passed and promises available
+     */
+    this.sendOTP = function (mobileNo, templateId, params, args, callback) {
+        if (typeof args === 'function') {
+            callback = args;
+            args = null;
+        }
 
         callback = modifyCallbackIfNull(callback);
 
-        mobileNos = validateMobileNos(mobileNos);
+        mobileNo = validateMobileNos(mobileNo);
 
         templateId = validateTemplate(templateId);
 
-        postData = isData(postData);
+        args = isData(args);
 
-        var apiAuth = "template_id=" + templateId + "&mobile=" + mobileNos + "&authkey=" + authKey;
+        if (!params["otp"]) {
+            params["otp"] = generateOTP(this.otp_length);
+            params["otp_expiry"] = this.otp_expiry;
+        } else if (!params["otp_expiry"]) params["otp_expiry"] = this.otp_expiry;        
+
+        let urlParameters = Object.entries(params || {}).map(e => e.join('=')).join('&');
+
+        var apiAuth = "template_id=" + templateId + "&mobile=" + mobileNo + "&authkey=" + authKey;
+        if (urlParameters) apiAuth += "&" + urlParameters;
 
         var options = {
             method: 'GET',
@@ -53,18 +92,25 @@ module.exports = function (authKey) {
             }
         };
 
-        makeHttpRequest(options, postData, function(err, data){
+        makeHttpRequest(options, args, function(err, data){
             callback(err, data);
         });
-    };   
+    };
 
-    this.verifyOTP = function (mobileNos, callback) {
+    this.verifyOTP = function (mobileNos, otp, callback) {
+        let params = {
+            otp: otp,
+            otp_expiry: this.otp_expiry
+        };
 
         callback = modifyCallbackIfNull(callback);
 
         mobileNos = validateMobileNos(mobileNos);
 
+        let urlParameters = Object.entries(params || {}).map(e => e.join('=')).join('&');
+
         var apiAuth = "mobile=" + mobileNos + "&authkey=" + authKey;
+        if (urlParameters) apiAuth += "&" + urlParameters;
         
         var options = {
             method: 'GET',
@@ -74,24 +120,22 @@ module.exports = function (authKey) {
             headers: {}
         };
 
-        makeHttpRequest(options, function(err, data){
+        makeHttpRequest(options, null, function(err, data){
             callback(err, data);
         });
     };
 
-    this.resendOTP = function (mobileNos, type, callback) {
-
-        if(arguments.length == 2) {
-            callback = type;
-            type = null;
+    this.resendOTP = function (mobileNos, retryType, callback) {
+        if (typeof retryType === 'function') {
+            callback = retryType;
+            retryType = this.retry_type;
         }
 
         callback = modifyCallbackIfNull(callback);
 
         mobileNos = validateMobileNos(mobileNos);
 
-        var apiAuth = "authkey=" + authKey + "&mobile=" + mobileNos;
-        if (type) apiAuth += "&retrytype=" + type;
+        var apiAuth = "authkey=" + authKey + "&mobile=" + mobileNos + "&retrytype=" + retryType;
         
         var options = {
             method: 'GET',
@@ -101,7 +145,7 @@ module.exports = function (authKey) {
             headers: {}
         };
 
-        makeHttpRequest(options, function(err, data){
+        makeHttpRequest(options, null, function(err, data){
             callback(err, data);
         });
     };
@@ -134,6 +178,21 @@ module.exports = function (authKey) {
 
     return this;
 };
+
+function generateOTP (otpLen) {
+          
+    // Declare a string variable
+    // which stores all string
+    var string = '0123456789';
+    let OTP = '';
+      
+    // Find the length of string
+    var len = string.length;
+    for (let i = 0; i < otpLen; i++ ) {
+        OTP += string[Math.floor(Math.random() * len)];
+    }
+    return OTP;
+}
 
 function validateMobileNos(mobileNos){
 
