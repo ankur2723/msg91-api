@@ -16,24 +16,18 @@ npm install msg91-api --save
 ```javascript
 var msg91 = require("msg91")("API_KEY");
 
-
-// Mobile No can be a single number, list or csv string
-
-var mobileNo = "XXXXXXXXXX";
-
-var mobileNo = [ "XXXXXXXXXX", "XXXXXXXXXX", "XXXXXXXXXX" ];
-
-var mobileNo =  "XXXXXXXXXX,XXXXXXXXXX,XXXXXXXXXX";
+// Mobile No can be a single (XXXXXXXXXX) number or csv string (XXXXXXXXXX, XXXXXXXXXX)
+// Variables with the same name defind in SMS template
 
 var postData = {
   "flow_id": "EnterflowID",
   "sender": "EnterSenderID",
-  "mobiles": "Enter Mobile Number",
+  "mobiles": "Enter Mobile Number", 
   "VAR1": "VALUE1",
   "VAR2": "VALUE2"
 };
 
-msg91.sendSMS(mobileNo, postData, function(err, response){
+msg91.sendSMS(postData, function(err, response){
     console.log(err);
     console.log(response);
 });

@@ -4,24 +4,7 @@
 
 var msg91 = require("./index")("API");
 
-var mobileNo = "XXXXXXXXXX";
-
-msg91.sendSMS("mobileNo", "POST_DATA", function (err, response) {
-    console.log(err);
-    console.log(response);
-});
-
-
-var mobileList = [ "XXXXXXXXXX", "XXXXXXXXXX", "XXXXXXXXXX" ];
-
-msg91.sendSMS(mobileList, "POST_DATA", function (err, response) {
-    console.log(err);
-    console.log(response);
-});
-
-var mobileNoCSV =  "XXXXXXXXXX,XXXXXXXXXX,XXXXXXXXXX";
-
-msg91.sendSMS(mobileNoCSV, "POST_DATA", function (err, response) {
+msg91.sendSMS("POST_DATA", function (err, response) {
     console.log(err);
     console.log(response);
 });

@@ -9,11 +9,9 @@ module.exports = function (authKey) {
         throw new Error("MSG91 Authorization Key not provided.");
     }
 
-    this.sendSMS = function (mobileNos, postData, callback) {
+    this.sendSMS = function (postData, callback) {
 
         callback = modifyCallbackIfNull(callback);
-
-        mobileNos = validateMobileNos(mobileNos);
 
         postData = isData(postData);
 
