@@ -13,11 +13,11 @@ module.exports = function (authKey) {
     this.otp_expiry = 1440; // default 1 Day = 1440 minutes
     this.retry_type = 'voice';
 
-    this.sendSMS = function (postData, callback) {
+    this.sendSMS = function (args, callback) {
 
         callback = modifyCallbackIfNull(callback);
 
-        postData = isData(postData);
+        args = isData(args);
 
         var options = {
             method: 'POST',
@@ -30,7 +30,7 @@ module.exports = function (authKey) {
             }
         };
 
-        makeHttpRequest(options, postData, function(err, data){
+        makeHttpRequest(options, args, function(err, data){
             callback(err, data);
         });
     };    
@@ -77,7 +77,7 @@ module.exports = function (authKey) {
             params["otp_expiry"] = this.otp_expiry;
         } else if (!params["otp_expiry"]) params["otp_expiry"] = this.otp_expiry;        
 
-        let urlParameters = Object.entries(params || {}).map(e => e.join('=')).join('&');
+        var urlParameters = Object.entries(params || {}).map(function (e) { e.join('=') }).join('&');
 
         var apiAuth = "template_id=" + templateId + "&mobile=" + mobileNo + "&authkey=" + authKey;
         if (urlParameters) apiAuth += "&" + urlParameters;
@@ -98,7 +98,7 @@ module.exports = function (authKey) {
     };
 
     this.verifyOTP = function (mobileNos, otp, callback) {
-        let params = {
+        var params = {
             otp: otp,
             otp_expiry: this.otp_expiry
         };
@@ -107,11 +107,11 @@ module.exports = function (authKey) {
 
         mobileNos = validateMobileNos(mobileNos);
 
-        let urlParameters = Object.entries(params || {}).map(e => e.join('=')).join('&');
+        var urlParameters = Object.entries(params || {}).map(function (e) { e.join('=') }).join('&');
 
         var apiAuth = "mobile=" + mobileNos + "&authkey=" + authKey;
         if (urlParameters) apiAuth += "&" + urlParameters;
-        
+
         var options = {
             method: 'GET',
             hostname: 'api.msg91.com',
@@ -184,11 +184,11 @@ function generateOTP (otpLen) {
     // Declare a string variable
     // which stores all string
     var string = '0123456789';
-    let OTP = '';
+    var OTP = '';
       
     // Find the length of string
     var len = string.length;
-    for (let i = 0; i < otpLen; i++ ) {
+    for (var i = 0; i < otpLen; i++ ) {
         OTP += string[Math.floor(Math.random() * len)];
     }
     return OTP;
