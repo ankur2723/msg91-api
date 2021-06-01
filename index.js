@@ -234,8 +234,12 @@ function makeHttpRequest(options, postData, callback) {
             data += chunk;
         });
         res.on('end', function () {
-            data = JSON.parse(data);         
-            callback(null, data);
+            try {
+                data = JSON.parse(data);
+                callback(null, data);
+            } catch (e) {
+                callback(e);
+            }
         });
     });
 
